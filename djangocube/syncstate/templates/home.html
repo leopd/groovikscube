@@ -1,0 +1,45 @@
+<html>
+
+<head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+<title>Trivial web-cube simulator</title>
+</head>
+<body>
+
+Cube state: 
+<div id="cubestate">
+(loading)
+</div>
+
+<form action="rotate" method="POST">
+  <input type=submit name="Rotate">
+</form>
+
+<script>
+  function poll_state() {
+    // Make an XHR call to /sync/poll and put the response into the cubestate div
+    $('#cubestate').load('poll');
+
+    // some number of ms later do it again
+    window.setTimeout( poll_state, 250 );
+  }
+
+  $(document).ready(function() {
+    // start loading the state.
+    poll_state();
+
+    // Change the form submit behavior so we don't leave the page
+
+    $('form').submit(function(){ 
+      // Just post the form, and don't do anything with the response.
+      $.ajax({
+        type: "POST",
+        url: $(this).attr('action'), 
+      });
+      return false;  // prevents the browser from posting the form itself.
+    });
+  });
+</script>
+
+</body>
+</html>
